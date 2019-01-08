@@ -13,6 +13,8 @@ use App\Observers\SectionObserver;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Telescope\TelescopeServiceProvider;
+use Redis;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
             'section' => Section::class,
             'warehouse' => Warehouse::class,
         ]);
+        Redis::enableEvents();
         // Register blade component to handle breadcrumbs
         Blade::component('components.breadcrumbs', 'breadcrumbs');
     }
@@ -45,6 +48,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        if ($this->app->isLocal()) {
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 }
